@@ -14,44 +14,46 @@ class RoomList extends Component {
 
    }
 
-  componentDidMount() {
-    this.roomsRef.on('child_added', snapshot => {
-       const room = snapshot.val();
-       room.key = snapshot.key;
-       this.setState({ rooms: this.state.rooms.concat( room ) })
-    });
-  }
+    componentDidMount() {
+      this.roomsRef.on('child_added', snapshot => {
+         const room = snapshot.val();
+         room.key = snapshot.key;
+         this.setState({ rooms: this.state.rooms.concat( room ) })
+         if (this.state.rooms.length === 1) { this.props.setActiveRoom(room) }
+      });
+    }
 
- handleSubmit(e) {
-  e.preventDefault();
-  if (!this.state.newRoomName) { return }
-  this.roomsRef.push({ 
-    name: this.state.newRoomName 
-  });
-  this.setState({newRoomName: '' });
- }
-
-
- handleChange(e) {
-  this.setState({ newRoomName: e.target.value })
- }
+    handleSubmit(e) {
+      e.preventDefault();
+      if (!this.state.newRoomName) { return }
+      this.roomsRef.push({ 
+        name: this.state.newRoomName 
+      });
+      this.setState({newRoomName: '' });
+    }
 
 
-  render() {
-     return (
-        <div>
-          <form onSubmit={ (e) => this.handleSubmit(e) }>
-            <input type="text" value={ this.state.newRoomName } onChange={ (e) => this.handleChange(e) } />
-            <input type="submit" />
-          </form>  
-          <ul>
-            { this.state.rooms.map( (room, index) => 
-               <li key={ index }>{ room.name }</li>
-            )}
-          </ul> 
-        </div> 
-     );
-   }
+    handleChange(e) {
+      this.setState({ newRoomName: e.target.value })
+    }
+
+
+    render() {
+       return (
+          <div>
+            <form onSubmit={ (e) => this.handleSubmit(e) }>
+              <input type="text" value={ this.state.newRoomName } onChange={ (e) => this.handleChange(e) } />
+              <input type="submit" />
+            </form>  
+            <ul>
+              { this.state.rooms.map( (room, index) => 
+                 <li key={ index } onClick={ () => this.props.setActiveRoom(room)}>{ room.name }
+                 </li>
+              )}
+            </ul> 
+          </div> 
+       );
+     }
 
 
 
